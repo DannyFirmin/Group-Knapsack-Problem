@@ -1,6 +1,5 @@
 #include <iostream>
 #include<fstream>
-#include <vector>
 
 using namespace std;
 
@@ -17,16 +16,17 @@ int main(int argc, char **argv) {
     }
     int budget, buyTypeQty, modelCount;
     fin >> budget >> buyTypeQty;
-    vector<int> table[buyTypeQty]; // array of vectors
+    int modelsCounts[100];
+    int table[100][100];
     int group = 0;
     while (fin >> modelCount) {
-        vector<int> models(modelCount); // array element of table
+        //vector<int> models(modelCount); // array element of table
+        modelsCounts[group] = modelCount;
         for (int modelIndex = 0; modelIndex < modelCount; modelIndex++) {
             int price;
             fin >> price;
-            models[modelIndex] = price;
+            table[group][modelIndex] = price;
         }
-        table[group] = models;
         group++;
     }
     int n = group;
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
         }
 
         int next = n - 1;
-        while (next >= 0 && (indexMask[next] + 1 >= table[next].size()))
+        while (next >= 0 && (indexMask[next] + 1 >= modelsCounts[next]))
             next--;
         if (next < 0)
             break;
