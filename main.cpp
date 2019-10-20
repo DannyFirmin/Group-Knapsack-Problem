@@ -2,7 +2,6 @@
 #include<fstream>
 
 using namespace std;
-
 int main(int argc, char **argv) {
     if (argc != 2) {
         cout << "Error: Input file not specified or too many arguments" << endl << "Usage: Program FileName" << endl;
@@ -29,38 +28,16 @@ int main(int argc, char **argv) {
         }
         group++;
     }
-    int n = group;
-    int *indexMask = new int[n];
-    for (int i = 0; i < n; i++)
-        indexMask[i] = 0;
-    int bestCost = 0;
-    int selectedIndex[n];
-    int tmpSelectedIndex[n];
-    while (true) {
-        int tempCost = 0;
-        for (int i = 0; i < n; i++) {
-            tempCost += table[i][indexMask[i]];
-            tmpSelectedIndex[i] = indexMask[i];
+    int results[100000] = {0};
+    for (int i = 0; i < group; i++) {
+        for (int j = budget; j >= 0; j--) {
+            for (int k = 0; k < modelsCounts[i]; k++) {
+                if (j >= table[i][k]) {
+                    results[j] = max (results[j], results[j - table[i][k]] + table[i][k]);
+                }
+            }
         }
-        if (tempCost <= budget && tempCost > bestCost) {
-            bestCost = tempCost;
-            for (int i = 0; i < n; i++)
-                selectedIndex[i] = tmpSelectedIndex[i];
-        }
-
-        int next = n - 1;
-        while (next >= 0 && (indexMask[next] + 1 >= modelsCounts[next]))
-            next--;
-        if (next < 0)
-            break;
-        indexMask[next]++;
-
-        for (int i = next + 1; i < n; i++)
-            indexMask[i] = 0;
     }
-    cout << bestCost << " ";
-    for (int i = 0; i < n; i++)
-        cout << selectedIndex[i] + 1 << " ";
-    cout << endl;
+    cout << results[budget] <<endl;
     return 0;
 }
