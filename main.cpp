@@ -4,7 +4,6 @@
 #include <ctime>
 // u6611178 Danny, 2019, Australia
 // Knapsack with selection from distinct groups solved by DP - COMP3600 Assignment 3
-// Algorithms credit to: https://stackoverflow.com/questions/29729609/knapsack-with-selection-from-distinct-groups
 // The code for file reading credits to COMP3600 Assignment 2 provided code
 using namespace std;
 
@@ -20,25 +19,25 @@ int main(int argc, char **argv) {
         return -1;
     }
     auto start = std::chrono::system_clock::now();
-    int budget, buyTypeQty, modelCount;
-    fin >> budget >> buyTypeQty;
+    int M, buyTypeQty, modelCount;
+    fin >> M >> buyTypeQty;
     int modelsCounts[100];
     int table[100][100];
-    int group = 0;
+    int T = 0;
     while (fin >> modelCount) {
-        modelsCounts[group] = modelCount;
+        modelsCounts[T] = modelCount;
         for (int modelIndex = 0; modelIndex < modelCount; modelIndex++) {
             int price;
             fin >> price;
-            table[group][modelIndex] = price;
+            table[T][modelIndex] = price;
         }
-        group++;
+        T++;
     }
     int results[100000] = {0};
     int prevBudget = 0;
     int selectedId[100] = {0};
-    for (int i = 0; i < group; i++) {
-        for (int j = budget; j >= 0; j--) {
+    for (int i = 0; i < T; i++) {
+        for (int j = M; j >= 0; j--) {
             for (int k = 0; k < modelsCounts[i]; k++) {
                 if (j >= table[i][k]) {
                     results[j] = max(results[j], results[j - table[i][k]] + table[i][k]);
@@ -46,15 +45,15 @@ int main(int argc, char **argv) {
             }
         }
         for (int k = 0; k < modelsCounts[i]; k++) {
-            if (table[i][k] == results[budget] - prevBudget) {
+            if (table[i][k] == results[M] - prevBudget) {
                 selectedId[i] = k + 1;
                 break;
             }
         }
-        prevBudget = results[budget];
+        prevBudget = results[M];
     }
-    cout << results[budget] << " ";
-    for (int i = 0; i < group; i++) {
+    cout << results[M] << " ";
+    for (int i = 0; i < T; i++) {
         cout << selectedId[i] << " ";
     }
     cout << endl;
