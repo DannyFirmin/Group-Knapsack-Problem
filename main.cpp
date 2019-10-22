@@ -1,11 +1,15 @@
 #include <iostream>
 #include <fstream>
-#include <chrono>
-#include <ctime>
 // u6611178 Danny, 2019, Australia
 // Knapsack with selection from distinct groups solved by DP - COMP3600 Assignment 3
+// Algorithms credit to: https://stackoverflow.com/questions/29729609/knapsack-with-selection-from-distinct-groups https://blog.csdn.net/zhaohaibo_/article/details/86177801
 // The code for file reading credits to COMP3600 Assignment 2 provided code
 using namespace std;
+struct recordElement {
+    int index;
+    int prevPrice;
+};
+recordElement dpItems[100][100000];
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -18,7 +22,6 @@ int main(int argc, char **argv) {
         cout << "Error: input file cannot be opened" << endl;
         return -1;
     }
-    auto start = std::chrono::system_clock::now();
     int M, buyTypeQty, modelCount;
     fin >> M >> buyTypeQty;
     int modelsCounts[100];
@@ -34,33 +37,31 @@ int main(int argc, char **argv) {
         T++;
     }
     int results[100000] = {0};
-    int prevBudget = 0;
-    int selectedId[100] = {0};
+
     for (int i = 0; i < T; i++) {
         for (int j = M; j >= 0; j--) {
+            int tempMax = 0;
             for (int k = 0; k < modelsCounts[i]; k++) {
                 if (j >= table[i][k]) {
                     results[j] = max(results[j], results[j - table[i][k]] + table[i][k]);
+                    if (results[j] > tempMax) {
+                        recordElement item = {k + 1, j - table[i][k]};
+                        dpItems[i][j - 1] = item;
+                        tempMax = results[j];
+                    }
                 }
             }
         }
-        for (int k = 0; k < modelsCounts[i]; k++) {
-            if (table[i][k] == results[M] - prevBudget) {
-                selectedId[i] = k + 1;
-                break;
-            }
-        }
-        prevBudget = results[M];
     }
     cout << results[M] << " ";
+    int selectedId[T];
+    for (int i = T - 1; i >= 0; i--) {
+        selectedId[i] = dpItems[i][M - 1].index;
+        M = dpItems[i][M - 1].prevPrice;
+    }
     for (int i = 0; i < T; i++) {
         cout << selectedId[i] << " ";
     }
     cout << endl;
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end - start;
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-    std::cout << "finished computation at " << std::ctime(&end_time)
-              << "elapsed time: " << elapsed_seconds.count() * 1000 << "ms\n";
     return 0;
 }
