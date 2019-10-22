@@ -2,7 +2,6 @@
 #include <fstream>
 // u6611178 Danny, 2019, Australia
 // Knapsack with selection from distinct groups solved by DP - COMP3600 Assignment 3
-// Algorithms credit to: https://stackoverflow.com/questions/29729609/knapsack-with-selection-from-distinct-groups https://blog.csdn.net/zhaohaibo_/article/details/86177801
 // The code for file reading credits to COMP3600 Assignment 2 provided code
 using namespace std;
 struct recordElement {
